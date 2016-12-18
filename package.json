@@ -1,18 +1,23 @@
 {
-  "name": "gulp-minify-sample",
-  "version": "0.1.0",
-  "description": "sample",
-  "main": "index.js",
+  "name": "minify-sample",
+  "version": "1.0.0",
+  "description": "jsとcssを圧縮するサンプルです",
+  "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eichisanden/gulp-minify-sample.git"
+  },
   "devDependencies": {
-    "esprima": "^3.1.2",
+    "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-ast": "0.0.4",
+    "gulp-clean-css": "^3.0.4",
+    "gulp-sourcemaps": "^2.3.0",
     "gulp-uglify": "^2.0.0",
-    "through2": "^2.0.3"
+    "pump": "^1.0.2",
+    "run-sequence": "^1.2.2"
   }
 }

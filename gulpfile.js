@@ -1,96 +1,80 @@
-var gulp = require('gulp');
-var ast = require('gulp-ast');
-var through2 = require('through2');
-var uglify = require('gulp-uglify');
-var esprima = require('esprima');
+const gulp = require('gulp');
+const uglify = require('gulp-uglify');
+const cleanCSS = require('gulp-clean-css');
+const runSequence = require('run-sequence');
+const del = require('del');
+const sourcemaps = require('gulp-sourcemaps');
+const ast = require('gulp-ast');
+const pump = require('pump');
+
+const inputDir = 'sample-src';
+const outputDir = 'dist';
 
 /**
- * コメント除去
+ * default
+ */
+gulp.task('default', callback => {
+    // gulpではタスクが並列に実行されるため、run-sequenceプラグインを使って順次実行
+    runSequence('clean', 'copy', 'minify-css', 'minify-js', callback);
+});
+
+/**
+ * clean
+ */
+gulp.task('clean', callback => {
+    return del(outputDir, callback);
+});
+
+/**
+ * コピー
  *
- * AST変換後にソースに戻すことでコメント除去
- * 足りないセミコロンが補われたりコードも整形される
+ * inputDirの内容を丸ごとoutputDirへコピーする
  */
-gulp.task('del-comment', function() {
-  gulp.src(['sample-src/**/*.js', '!sample-src/lib/*.js'])
-    .pipe(ast.parse())
-    .pipe(ast.render())
-    .pipe(gulp.dest('./del-comment/'))
+gulp.task('copy', () => {
+    return gulp.src(`${inputDir}/**/*`)
+        .pipe(gulp.dest(outputDir));
 });
 
 /**
- * コード圧縮
+ * CSSコード圧縮
+ *
+ * gulp-clean-cssのオプションは下記を参照
+ * https://github.com/scniro/gulp-clean-css
  */
-gulp.task('uglify', () => {
-  gulp.src(['sample-src/**/*.js', '!sample-src/lib/*.js'])
-    .pipe(uglify())
-    .pipe(gulp.dest('./dest/'))
+gulp.task('minify-css', () => {
+    return gulp.src([`${inputDir}/**/*.css`])
+        .pipe(cleanCSS())
+        .pipe(gulp.dest(outputDir));
 });
 
 /**
- * AST変換（esprima.tokenize）
+ * jsコード圧縮
+ *
+ * gulp-uglifyにオプションは下記を参照
+ * https://github.com/terinjokes/gulp-uglify
  */
-gulp.task('src-tokenize', function() {
-  gulp.src(['sample-src/**/*.js', '!sample-src/lib/*.js'])
-    .pipe(tokenize())
-    .pipe(render())
-    .pipe(gulp.dest('./src-tokenize/'))
+gulp.task('minify-js', callback => {
+    pump([
+        gulp.src([`${inputDir}/**/*.js`, `!${inputDir}/js/lib/*.js`]),
+        sourcemaps.init(),
+        uglify(),
+        sourcemaps.write('.'), // Source Mapを同じフォルダに出力
+        gulp.dest(outputDir),
+      ],
+      callback
+    );
 });
 
 /**
- * AST変換（esprima.parse）
+ * jsコードコメント除去だけ
  */
-gulp.task('src-parse', function() {
-  gulp.src(['sample-src/**/*.js', '!sample-src/lib/*.js'])
-    .pipe(ast.parse())
-    .pipe(render())
-    .pipe(gulp.dest('./src-parse/'))
+gulp.task('comment-del-js', callback => {
+    pump([
+        gulp.src([`${inputDir}/**/*.js`, `!${inputDir}/js/lib/*.js`]),
+        ast.parse(),        // コメント除去するため一度astに変換して
+        ast.render(),       // ソースコードの形に戻す
+        gulp.dest(outputDir)
+      ],
+      callback
+    );
 });
-
-/**
- * AST変換（esprima.tokenize）
- */
-gulp.task('dest-tokenize', function() {
-  gulp.src(['dest/**/*.js'])
-    .pipe(tokenize())
-    .pipe(render())
-    .pipe(gulp.dest('./dest-tokenize/'))
-});
-
-/**
- * AST変換（esprima.parse）
- */
-gulp.task('dest-parse', function() {
-  gulp.src(['dest/**/*.js'])
-    .pipe(ast.parse())
-    .pipe(render())
-    .pipe(gulp.dest('./dest-parse/'))
-});
-
-function tokenize() {
-  return through2.obj(function(file, encoding, cb) {
-    var err;
-    try {
-      file.ast = esprima.tokenize(String(file.contents));
-      this.push(file);
-    } catch (_error) {
-      err = _error;
-      this.emit('error', new Error(err));
-    }
-    return cb();
-  });
-}
-
-function render() {
-  return through2.obj(function(file, encoding, cb) {
-    var err;
-    try {
-      file.contents = new Buffer(JSON.stringify(file.ast, null, 2));
-      delete file.ast;
-      this.push(file);
-    } catch (_error) {
-      err = _error;
-      this.emit(err);
-    }
-    return cb();
-  });
-};

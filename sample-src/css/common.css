@@ -1,0 +1,12 @@
+/*
+ common.css
+ */
+ h1 {
+   color: red;
+ }
+
+ /* test */
+ input {
+   /*test*/margin: 10px;
+   padding: 5px;/* aaaa*/
+ }
