@@ -1,4 +1,3 @@
-const gulp = require('gulp');
 const uglify = require('gulp-uglify');
 const cleanCSS = require('gulp-clean-css');
 const runSequence = require('run-sequence');
