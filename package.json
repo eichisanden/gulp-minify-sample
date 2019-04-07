@@ -11,13 +11,13 @@
     "url": "git@github.com:eichisanden/gulp-minify-sample.git"
   },
   "devDependencies": {
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
+    "del": "2.2.2",
+    "gulp": "3.9.1",
     "gulp-ast": "0.0.4",
-    "gulp-clean-css": "^3.0.4",
-    "gulp-sourcemaps": "^2.3.0",
-    "gulp-uglify": "^2.0.0",
-    "pump": "^1.0.2",
-    "run-sequence": "^1.2.2"
+    "gulp-clean-css": "3.10.0",
+    "gulp-sourcemaps": "2.6.5",
+    "gulp-uglify": "2.1.2",
+    "pump": "1.0.3",
+    "run-sequence": "1.2.2"
   }
 }
