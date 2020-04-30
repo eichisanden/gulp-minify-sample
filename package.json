@@ -14,7 +14,7 @@
     "del": "4.1.0",
     "gulp": "3.9.1",
     "gulp-ast": "0.0.4",
-    "gulp-clean-css": "3.10.0",
+    "gulp-clean-css": "4.3.0",
     "gulp-sourcemaps": "2.6.5",
     "gulp-uglify": "2.1.2",
     "pump": "1.0.3",
