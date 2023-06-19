@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "del": "4.1.0",
-    "gulp": "3.9.1",
+    "gulp": "4.0.2",
     "gulp-ast": "0.0.4",
     "gulp-clean-css": "3.10.0",
     "gulp-sourcemaps": "2.6.5",
